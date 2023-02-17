@@ -1,9 +1,8 @@
 import 'package:flutter_rick_and_morty/features/heroes_list/widgets/heroes_card.dart';
-import 'package:flutter_rick_and_morty/repositories/rick_and_morty/rick_and_morty_repository.dart';
+import 'package:flutter_rick_and_morty/repositories/rick_and_morty/rick_and_morty.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-
-import '../../../repositories/rick_and_morty/models/hero_model.dart';
+import 'package:get_it/get_it.dart';
 
 class HeroesList extends StatefulWidget {
   const HeroesList({super.key, required this.title});
@@ -14,12 +13,14 @@ class HeroesList extends StatefulWidget {
 }
 
 class _HeroesListState extends State<HeroesList> {
-  List<HeroResultResponse>? _heroes;
-  int page = 1;
+  final scrollController = ScrollController();
+  List<HeroResultDTO>? _heroes;
+  bool isLoadingMore = false;
 
   @override
   void initState() {
-    _loadData();
+    scrollController.addListener(_scroolListener);
+    _loadData(false);
     super.initState();
   }
 
@@ -32,8 +33,9 @@ class _HeroesListState extends State<HeroesList> {
       body: (_heroes == null)
           ? const Center(child: CupertinoActivityIndicator())
           : ListView.builder(
-              padding: const EdgeInsets.only(top: 10),
-              itemCount: _heroes!.length,
+              controller: scrollController,
+              padding: EdgeInsets.all(10.0),
+              itemCount: isLoadingMore ? _heroes!.length + 2 : _heroes!.length,
               itemBuilder: (BuildContext context, int index) => HeroesCard(
                 index: index,
                 heroesList: _heroes!,
@@ -43,8 +45,22 @@ class _HeroesListState extends State<HeroesList> {
     );
   }
 
-  Future<void> _loadData() async {
-    _heroes = await RickAndMortyRepository().getCharacterList(page);
+  Future<void> _loadData(bool refresh) async {
+    _heroes =
+        await GetIt.I<AbstractRickAndMortyRepository>().getCharacterList(refresh);
     setState(() {});
+  }
+
+  Future<void> _scroolListener() async {
+    if (scrollController.position.pixels ==
+        scrollController.position.maxScrollExtent) {
+      setState(() {
+        isLoadingMore = true;
+      });
+      _loadData(true);
+    }
+    setState(() {
+      isLoadingMore = false;
+    });
   }
 }
