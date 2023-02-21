@@ -1,8 +1,12 @@
 import 'package:flutter_rick_and_morty/features/heroes_list/widgets/heroes_card.dart';
 import 'package:flutter_rick_and_morty/repositories/rick_and_morty/rick_and_morty.dart';
+import 'bloc/heroes_bloc.dart';
+// import 'package:flutter_rick_and_morty/heroes_list/view/bloc/heroes_bloc.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:get_it/get_it.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+// import 'package:get_it/get_it.dart';
 
 class HeroesList extends StatefulWidget {
   const HeroesList({super.key, required this.title});
@@ -13,6 +17,7 @@ class HeroesList extends StatefulWidget {
 }
 
 class _HeroesListState extends State<HeroesList> {
+  final heroesBloc = HeroesBloc();
   final scrollController = ScrollController();
   List<HeroResultDTO>? _heroes;
   bool isLoadingMore = false;
@@ -27,27 +32,37 @@ class _HeroesListState extends State<HeroesList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: (_heroes == null)
-          ? const Center(child: CupertinoActivityIndicator())
-          : ListView.builder(
-              controller: scrollController,
-              padding: EdgeInsets.all(10.0),
-              itemCount: isLoadingMore ? _heroes!.length + 2 : _heroes!.length,
-              itemBuilder: (BuildContext context, int index) => HeroesCard(
-                index: index,
-                heroesList: _heroes!,
-                context: context,
-              ),
-            ),
-    );
+        appBar: AppBar(
+          title: Text(widget.title),
+        ),
+        body: SafeArea(
+          child: BlocBuilder<HeroesBloc, HeroesState>(
+            bloc: heroesBloc,
+            builder: (context, state) {
+              _heroes = state.heroes;
+              return (_heroes == null)
+                  ? const Center(child: CupertinoActivityIndicator())
+                  : ListView.builder(
+                      controller: scrollController,
+                      padding: EdgeInsets.all(10.0),
+                      itemCount:
+                          isLoadingMore ? _heroes!.length + 2 : _heroes!.length,
+                      itemBuilder: (BuildContext context, int index) =>
+                          HeroesCard(
+                        index: index,
+                        heroesList: _heroes!,
+                        context: context,
+                      ),
+                    );
+            },
+          ),
+        ));
   }
 
   Future<void> _loadData(bool refresh) async {
-    _heroes =
-        await GetIt.I<AbstractRickAndMortyRepository>().getCharacterList(refresh);
+    heroesBloc.add(DataLoadingEvent(isRefresh: refresh));
+    // _heroes =
+    //     await GetIt.I<AbstractRickAndMortyRepository>().getCharacterList(refresh);
     setState(() {});
   }
 
