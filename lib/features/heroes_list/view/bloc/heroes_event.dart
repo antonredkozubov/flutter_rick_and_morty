@@ -8,7 +8,6 @@ abstract class HeroesEvent extends Equatable {
 }
 
 class DataLoadingEvent extends HeroesEvent {
-  // final List<HeroResultDTO> heroes;
   final bool isRefresh;
 
   DataLoadingEvent({required this.isRefresh});

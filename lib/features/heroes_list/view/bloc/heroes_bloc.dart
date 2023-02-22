@@ -1,4 +1,3 @@
-import 'dart:ffi';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -14,9 +13,8 @@ class HeroesBloc extends Bloc<HeroesEvent, HeroesState> {
   }
 
   _dataLoading(DataLoadingEvent event, Emitter<HeroesState> emit) async {
-    emit(state.copyWith(isLoading: true));
     final _heroes =
-        await GetIt.I<AbstractRickAndMortyRepository>().getCharacterList(false);
+        await GetIt.I<AbstractRickAndMortyRepository>().getCharacterList(event.isRefresh);
     emit(state.copyWith(heroes: _heroes));
   }
 }

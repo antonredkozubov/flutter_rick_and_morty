@@ -1,9 +1,10 @@
-import 'package:flutter_rick_and_morty/features/hero_details/view/view.dart';
-import 'package:get_it/get_it.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:flutter_rick_and_morty/repositories/rick_and_morty/rick_and_morty.dart';
+import 'package:flutter_rick_and_morty/features/hero_details/view/view.dart';
+import 'bloc/details_bloc.dart';
 
 class HeroesInfoScreen extends StatefulWidget {
   const HeroesInfoScreen({super.key});
@@ -13,6 +14,7 @@ class HeroesInfoScreen extends StatefulWidget {
 }
 
 class _HeroesInfoScreenState extends State<HeroesInfoScreen> {
+  final heroBloc = DetailsBloc();
   HeroResultDTO? _hero;
   int? id;
   String? _heroName;
@@ -34,64 +36,75 @@ class _HeroesInfoScreenState extends State<HeroesInfoScreen> {
       appBar: AppBar(
         title: Text(_heroName ?? ""),
       ),
-      body: (_hero == null)
-          ? const Center(child: CupertinoActivityIndicator())
-          : LayoutBuilder(
-              builder: (context, boxConstraints) {
-                return Center(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Container(
-                          child: ClipRRect(
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(16)),
-                            child: Image.network(
-                              _hero?.image ?? "",
-                              width: 300,
-                              height: 300,
-                            ),
+      body: SafeArea(
+        child: BlocBuilder<DetailsBloc, DetailsState>(
+          bloc: heroBloc,
+          builder: (context, state) {
+            _hero = state.hero;
+            return (_hero == null)
+                ? const Center(child: CupertinoActivityIndicator())
+                : LayoutBuilder(
+                    builder: (context, boxConstraints) {
+                      return Center(
+                        child: SingleChildScrollView(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                child: ClipRRect(
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(16)),
+                                  child: Image.network(
+                                    _hero?.image ?? "",
+                                    width: 300,
+                                    height: 300,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              Container(
+                                color: Colors.amber,
+                                child: Text("Name: ${_hero?.name}"),
+                              ),
+                              Container(
+                                color: Colors.amber,
+                                child: Text("Gender: ${_hero?.gender}"),
+                              ),
+                              Container(
+                                color: Colors.amber,
+                                child: Text("Status: ${_hero?.status}"),
+                              ),
+                              Container(
+                                color: Colors.amber,
+                                child: Text("Species: ${_hero?.species}"),
+                              ),
+                              Container(
+                                color: Colors.amber,
+                                child:
+                                    Text("Episodes: ${_hero?.episodes.length}"),
+                              ),
+                              Container(
+                                color: Colors.amber,
+                                child: Text(
+                                    "Last location: ${_hero?.location.name}"),
+                              ),
+                            ],
                           ),
                         ),
-                        const SizedBox(height: 16),
-                        Container(
-                          color: Colors.amber,
-                          child: Text("Name: ${_hero?.name}"),
-                        ),
-                        Container(
-                          color: Colors.amber,
-                          child: Text("Gender: ${_hero?.gender}"),
-                        ),
-                        Container(
-                          color: Colors.amber,
-                          child: Text("Status: ${_hero?.status}"),
-                        ),
-                        Container(
-                          color: Colors.amber,
-                          child: Text("Species: ${_hero?.species}"),
-                        ),
-                        Container(
-                          color: Colors.amber,
-                          child: Text("Episodes: ${_hero?.episodes.length}"),
-                        ),
-                        Container(
-                          color: Colors.amber,
-                          child: Text("Last location: ${_hero?.location.name}"),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
+                      );
+                    },
+                  );
+          },
+        ),
+      ),
     );
   }
 
   Future<void> _loadData() async {
-    _hero = await GetIt.I<AbstractRickAndMortyRepository>()
-        .getCharacterInfo(id ?? 1);
+    // _hero = await GetIt.I<AbstractRickAndMortyRepository>()
+    //     .getCharacterInfo(id ?? 1);
+    heroBloc.add(DataLoadingEvent(id: id ?? 0));
     setState(() {});
   }
 }
