@@ -42,7 +42,7 @@ class _HeroesListState extends State<HeroesList> {
                 ? const Center(child: CupertinoActivityIndicator())
                 : ListView.builder(
                     controller: scrollController,
-                    padding: EdgeInsets.all(10.0),
+                    padding: const EdgeInsets.all(10.0),
                     itemCount:
                         isLoadingMore ? _heroes!.length + 2 : _heroes!.length,
                     itemBuilder: (BuildContext context, int index) =>
@@ -50,6 +50,7 @@ class _HeroesListState extends State<HeroesList> {
                       index: index,
                       heroesList: _heroes!,
                       context: context,
+                      heroesBloc: heroesBloc,
                     ),
                   );
           },

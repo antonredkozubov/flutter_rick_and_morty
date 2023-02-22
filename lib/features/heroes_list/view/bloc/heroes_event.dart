@@ -12,3 +12,10 @@ class DataLoadingEvent extends HeroesEvent {
 
   DataLoadingEvent({required this.isRefresh});
 }
+
+class OnShowDetails extends HeroesEvent { 
+  final int id; 
+  final String title;
+  final BuildContext context;
+  OnShowDetails({required this.id, required this.title, required this.context});
+}
