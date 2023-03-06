@@ -27,57 +27,60 @@ class HeroesCard extends StatelessWidget {
         child: BlocBuilder<HeroesBloc, HeroesState>(
           bloc: heroesBloc,
           builder: (context, state) {
-            return  Card(
-        // child: Card(
-          clipBehavior: Clip.antiAlias,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          child: Stack(
-            alignment: Alignment.topCenter,
-            children: [
-              Ink.image(
-                image: NetworkImage(hero.image),
-                height: 240,
-                fit: BoxFit.cover,
-                child: InkWell(
-                  onTap: () {
-                    heroesBloc.add(OnShowDetails(id: hero.id, title: hero.name, context: context));
-                    // Navigator.of(context).pushNamed(
-                    //   '/info',
-                    //   arguments: DetailsArguments(hero.name, hero.id),
-                    // );
-                  },
-                ),
-              ),
-              Column(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0, bottom: 186.0),
-                    child: Text(
-                      hero.name,
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 18),
+            return Card(
+              clipBehavior: Clip.antiAlias,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16)),
+              child: Stack(
+                alignment: Alignment.topCenter,
+                children: [
+                  Ink.image(
+                    image: NetworkImage(hero.image),
+                    height: 240,
+                    fit: BoxFit.cover,
+                    child: InkWell(
+                      onTap: () {
+                        heroesBloc.add(OnShowDetails(
+                            id: hero.id, title: hero.name, context: context));
+                      },
                     ),
                   ),
-                  Padding(
-                      padding: const EdgeInsets.only(
-                          bottom: 8.0, left: 16.0, right: 16.0),
-                      child: Row(
-                        children: <Widget>[
-                          Text('Gender: ${hero.gender}', style: const TextStyle(fontWeight: FontWeight.bold),),
-                          const Spacer(),
-                          Text('Race: ${hero.species}', style: const TextStyle(fontWeight: FontWeight.bold),),
-                        ],
-                      )),
+                  Column(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0, bottom: 186.0),
+                        child: Text(
+                          hero.name,
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 18),
+                        ),
+                      ),
+                      Padding(
+                          padding: const EdgeInsets.only(
+                              bottom: 8.0, left: 16.0, right: 16.0),
+                          child: Row(
+                            children: <Widget>[
+                              Text(
+                                'Gender: ${hero.gender}',
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              const Spacer(),
+                              Text(
+                                'Race: ${hero.species}',
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          )),
+                    ],
+                  ),
                 ],
               ),
-            ],
-          ),
-        );
-          }
-      )
+            );
+          },
+        ),
       );
-          // },
     } else {
       return Center(
         child: CupertinoActivityIndicator(),

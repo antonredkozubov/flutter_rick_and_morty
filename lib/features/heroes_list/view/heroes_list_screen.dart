@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_rick_and_morty/features/heroes_list/widgets/heroes_card.dart';
 import 'package:flutter_rick_and_morty/repositories/rick_and_morty/rick_and_morty.dart';
 import 'bloc/heroes_bloc.dart';
@@ -15,7 +16,7 @@ class HeroesList extends StatefulWidget {
 }
 
 class _HeroesListState extends State<HeroesList> {
-  final heroesBloc = HeroesBloc();
+  final heroesBloc = HeroesBloc(repository: RickAndMortyRepository(dio: Dio()));
   final scrollController = ScrollController();
   List<HeroResultDTO>? _heroes;
   bool isLoadingMore = false;
@@ -37,7 +38,9 @@ class _HeroesListState extends State<HeroesList> {
         child: BlocBuilder<HeroesBloc, HeroesState>(
           bloc: heroesBloc,
           builder: (context, state) {
-            _heroes = state.heroes;
+            if (state is CharactersLoaded) {
+              _heroes = state.heroes;
+            }
             return (_heroes == null)
                 ? const Center(child: CupertinoActivityIndicator())
                 : ListView.builder(

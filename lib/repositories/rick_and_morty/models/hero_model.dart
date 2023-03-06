@@ -21,16 +21,15 @@ class HeroResultDTO {
   final LocationDTO location;
   final List<String> episodes;
 
-  factory HeroResultDTO.fromJson(Map<String, dynamic> json) =>
-      HeroResultDTO(
-          id: json["id"],
-          name: json["name"],
-          species: json["species"],
-          gender: json["gender"],
-          image: json["image"],
-          status: json["status"],
-          location: LocationDTO.fromJson(json["location"]),
-          episodes: List<String>.from(json["episode"].map((e) => e)));
+  factory HeroResultDTO.fromJson(Map<String, dynamic> json) => HeroResultDTO(
+      id: json["id"],
+      name: json["name"],
+      species: json["species"],
+      gender: json["gender"],
+      image: json["image"],
+      status: json["status"],
+      location: LocationDTO.fromJson(json["location"]),
+      episodes: List<String>.from(json["episode"].map((e) => e)));
 
   Map<String, dynamic> toJson() => {
         "id": id,
@@ -42,4 +41,15 @@ class HeroResultDTO {
         "location": location,
         "episode": episodes,
       };
+
+  HeroResultDTO.empty()
+      : id = 1,
+        name = '',
+        status = '',
+        species = '',
+        gender = '',
+        location = LocationDTO.empty(),
+        image = '',
+        episodes = [];
+
 }

@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,7 +15,7 @@ class HeroesInfoScreen extends StatefulWidget {
 }
 
 class _HeroesInfoScreenState extends State<HeroesInfoScreen> {
-  final heroBloc = DetailsBloc();
+  final heroBloc = DetailsBloc(repository: RickAndMortyRepository(dio: Dio()));
   HeroResultDTO? _hero;
   int? id;
   String? _heroName;
@@ -40,7 +41,9 @@ class _HeroesInfoScreenState extends State<HeroesInfoScreen> {
         child: BlocBuilder<DetailsBloc, DetailsState>(
           bloc: heroBloc,
           builder: (context, state) {
-            _hero = state.hero;
+            if (state is CharacterLoaded) {
+              _hero = state.hero;
+            }
             return (_hero == null)
                 ? const Center(child: CupertinoActivityIndicator())
                 : LayoutBuilder(
@@ -102,8 +105,6 @@ class _HeroesInfoScreenState extends State<HeroesInfoScreen> {
   }
 
   Future<void> _loadData() async {
-    // _hero = await GetIt.I<AbstractRickAndMortyRepository>()
-    //     .getCharacterInfo(id ?? 1);
     heroBloc.add(DataLoadingEvent(id: id ?? 0));
     setState(() {});
   }

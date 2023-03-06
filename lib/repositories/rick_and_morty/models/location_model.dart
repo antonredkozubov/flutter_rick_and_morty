@@ -7,8 +7,7 @@ class LocationDTO {
   final String name;
   final String url;
 
-  factory LocationDTO.fromJson(Map<String, dynamic> json) =>
-      LocationDTO(
+  factory LocationDTO.fromJson(Map<String, dynamic> json) => LocationDTO(
         name: json["name"],
         url: json["url"],
       );
@@ -17,4 +16,9 @@ class LocationDTO {
         "name": name,
         "url": url,
       };
+
+  LocationDTO.empty()
+      : name = '',
+        url = '';
+
 }

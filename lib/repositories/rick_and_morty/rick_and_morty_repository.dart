@@ -8,6 +8,7 @@ class RickAndMortyRepository implements AbstractRickAndMortyRepository {
 
   final Dio dio;
   final List<HeroResultDTO> _characters = [];
+  final _baseUrl = 'https://rickandmortyapi.com/api';
   int _page = 1;
 
   @override
@@ -18,7 +19,7 @@ class RickAndMortyRepository implements AbstractRickAndMortyRepository {
       _page = 1;
     }
     Response response =
-        await dio.get('https://rickandmortyapi.com/api/character/?page=$_page');
+        await dio.get('$_baseUrl/character?page=$_page');
     final data = response.data as Map<String, dynamic>;
     _characters.addAll(data['results']
         .map<HeroResultDTO>((json) => HeroResultDTO.fromJson(json))
@@ -29,7 +30,7 @@ class RickAndMortyRepository implements AbstractRickAndMortyRepository {
   @override
   Future<HeroResultDTO> getCharacterInfo(int id) async {
     Response response =
-        await dio.get('https://rickandmortyapi.com/api/character/$id');
+        await dio.get('$_baseUrl/character/$id');
     if (response.statusCode == 200) {
       final data = response.data;
       final character = HeroResultDTO.fromJson(data);
